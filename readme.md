@@ -1,58 +1,71 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# BairesDev - Fullstack Coding Challenge - API Project
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This project was developed as part of a coding challenge for BairesDev. To see the complementary project for the Frontend go to [https://github.com/alexbaron50/bairesdev-frontend-test](https://github.com/alexbaron50/bairesdev-frontend-test)
 
-## About Laravel
+## About
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+This project was developed using Laravel 5.5 and it's intended to be used as a RESTful API
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Pre-requisites
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
+- The best way to run this project is by using the [Larabel Homestead](https://laravel.com/docs/5.5/homestead) virtual machine. If you prefer to set up your own server please refer to the [official documentation](https://laravel.com/docs/5.5/installation) for the installation.
+- In the `.env` file, modify the needed information to fit your system.
+- Be sure to have created a database with the name and proper permission as specified in the `.env` file.
+- Have the  `php` command available in the global path.
 
-## Learning Laravel
+## Table Migration
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
+Once you have properly set up you system to run the project, it's time to install the needed tables. From your command line, go to location of the project and run `php artisan migrate`
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+## Tables
 
-## Laravel Sponsors
+This project use mainly two tables to save the information: `images` and `thumbnails`.
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
+The `images` table has information about the name, path, status and creation of record of images.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Pulse Storm](http://www.pulsestorm.net/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
+The `thumbnails` table has information about the additional thumbs generated per each image. It has a foreign key related with the id of the image, and information about the width, height and the file name of the thumb generated.
 
-## Contributing
+The thumbnails are generated in the moment of the creation of each image and have a predefined size: `200w x 200h`, `400w x 300h` and `500w x 500h`. Feel free to change those sizes by editing the `database\seeds\ImageTableSeeder.php` and `app\Http\Controllers\InageController.php` files corresponding to the seeder and controller.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The images generated are saved in the `storage\app\public\images` folder. For every new record it will be created a folder with the id of the image, and inside that folder, it will the the full image and its thumbs.
 
-## Security Vulnerabilities
+## Seeder
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This project as a custom seeder used to pre-fill the information of the tables mentioned before. The location of the seeder is `database\seeds\ImageTableSeeder.php`. The script will read the content of the `database\seeds\Images` folder, and will only read those files that have an image format. The content of the folder is the files given in the specification of the application. Feel free to add more images if you want to seed the database with different information.
 
-## License
+To run the seed from your command line on the location of the project type `php artisan db:seed --class=ImageTableSeeder`;
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+If you run the command multiple times it will create new records on the database and files on the storage folder.
+
+If you want to reset the content of the images and thumbnails tables, and the files created, run from you command line `php artisan images:truncate`. The file corresponding to this command is located in `app\Console\Commands\TruncateImages.php`;
+
+## RESTful API Endpoints
+
+In order to perform all requirement specified, it was created the next endpoints:
+
+* `/api/images --METHOD GET` will return all `active` images.
+* `/api/images/deleted --METHOD GET` will return all `deleted` images.
+* `/api/images --METHOD POST` will create a new image. The request must contain, the next fields: `image_name`, `image_data` and `image_filename`. The `image_data` field must be in base64 encoded format. Following is an example of how to make a request to this endpoint using Javascript, however it will not work as the image_data is not encoded in base64. You can use [FileReader API](https://developer.mozilla.org/en-US/docs/Web/API/FileReader) to get this information from an input file in Javascript. On top of that you will to change the url for you own domain.
+
+```
+var data = new FormData();
+data.append("image_name", "name");
+data.append("image_data", "data");
+data.append("image_filename", "name.ext");
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "http://test.bairesdev.com/api/images");
+
+xhr.send(data);
+```
+* `/api/images/{id} --METHOD PUT` will make the image with the id provided as `active`
+* `/api/images/{id} --METHOD DELETE` will make the image with the id provided as `deleted`. As told in the specifications, an image will not be permanently deleted from the database.
+* `/api/images/download/{id} --METHOD GET` will force the download of the image. It file to be downloaded will have the original file name.
