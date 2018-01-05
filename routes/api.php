@@ -1,5 +1,6 @@
 <?php
 
+
 use Illuminate\Http\Request;
 use App\Image;
 /*
@@ -13,9 +14,13 @@ use App\Image;
 |
 */
 
-Route::get('images', 'ImageController@index')->middleware('cors');
-Route::get('images/deleted', 'ImageController@deleted')->middleware('cors');
-Route::get('images/{id}', 'ImageController@show')->middleware('cors');
-Route::post('images', 'ImageController@store')->middleware('cors');
-Route::put('images/{id}', 'ImageController@update')->middleware('cors');
-Route::delete('image/{id}', 'ImageController@delete')->middleware('cors');
+Route::group(['middleware' => 'cors', 'prefix'=> '/images'], function() {
+	Route::get('', 'ImageController@index')->middleware('cors');
+	Route::get('/deleted', 'ImageController@deleted')->middleware('cors');
+
+	Route::post('', 'ImageController@store')->middleware('cors');
+	Route::put('/{id}', 'ImageController@update')->middleware('cors');
+	Route::delete('/{id}', 'ImageController@delete')->middleware('cors');
+});
+
+Route::get('/download/{id}', 'ImageController@show');

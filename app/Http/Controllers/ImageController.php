@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Image;
 use App\Thumbnail;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use DB;
 
 class ImageController extends Controller
 {
     public function index() {
 
-	    return Image::where('status', 'active')
+	    $response = Image::where('status', 'active')
 	                ->get()
 	                ->map(function($image){
 		                $attributes = $image->attributesToArray();
@@ -24,6 +25,8 @@ class ImageController extends Controller
 
 		                return $attributes;
 	                });
+
+	    return response()->json($response);
     }
 
     public function deleted() {
@@ -42,7 +45,12 @@ class ImageController extends Controller
     }
 
     public function show($id) {
-    	return Image::find($id);
+	    $image = Image::findOrFail($id);
+	    $attributes = $image->attributesToArray();
+	    $file = sprintf('%s/%s/%s/%s', storage_path('app/public'), 'images', $attributes['id'], $attributes['path']);
+
+	    return response()->download($file, $attributes['path']);
+    	//return Image::find($id);
     }
 
     public function store(Request $request) {
@@ -51,15 +59,15 @@ class ImageController extends Controller
 
     public function update(Request $request, $id) {
     	$image = Image::findOrFail($id);
-    	$image->update($request->all());
-
+	    $image->status = 'active';
+	    $image->save();
     	return $image;
     }
 
     public function delete(Request $request, $id) {
     	$image = Image::findOrFail($id);
-    	$image->delete();
-
-    	return 204;
+	    $image->status = 'deleted';
+	    $image->save();
+    	return $image;
     }
 }
