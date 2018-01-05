@@ -69,3 +69,11 @@ xhr.send(data);
 * `/api/images/{id} --METHOD PUT` will make the image with the id provided as `active`
 * `/api/images/{id} --METHOD DELETE` will make the image with the id provided as `deleted`. As told in the specifications, an image will not be permanently deleted from the database.
 * `/api/images/download/{id} --METHOD GET` will force the download of the image. It file to be downloaded will have the original file name.
+
+## Laravel Homestead - IE Edge
+
+Laravel Homestead uses Virtual Box for emulating an Ubuntu environment on Windows. It creates a new Network interface with is own private IP. To access the site on Homestead you just type the IP given and you will see the site running on every browser except IE Edge. If you want to use IE Edge please don't use Homestead to navigate the site, instead try something like [XAMPP](https://www.apachefriends.org/index.html) to run the API.
+
+This is not a problem related exclusively with Laravel Homestead but with every vagrant box that is not reached by IE Edge. Even in IE 11 the site will work.
+
+You can try this [solution](https://www.hanselman.com/blog/FixedMicrosoftEdgeCantSeeOrOpenVirtualBoxhostedLocalWebSites.aspx) but unfortunately it doesn't work all the times.
