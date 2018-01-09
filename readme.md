@@ -1,6 +1,6 @@
 # BairesDev - Fullstack Coding Challenge - API Project
 
-This project was developed as part of a coding challenge for BairesDev. To see the complementary project for the Frontend go to [https://github.com/alexbaron50/bairesdev-frontend-test](https://github.com/alexbaron50/bairesdev-frontend-test)
+This project was developed as part of a coding challenge for BairesDev. To see the complementary project for the Frontend go to [https://github.com/baires-test/frontend](https://github.com/baires-test/frontend)
 
 ## About
 
